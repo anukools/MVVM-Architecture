@@ -22,7 +22,7 @@ public class ContactItemBindingAdapter {
     @BindingAdapter("app:items")
     public static void setItems(RecyclerView recyclerView, List<Contact> items) {
         ContactsAdapter adapter = (ContactsAdapter) recyclerView.getAdapter();
-        if (adapter != null) {
+        if (adapter != null && items != null) {
             Log.e("Called :", " ContactItemBindingAdapter setItems    " + items.size());
             adapter.updateData(items);
         }

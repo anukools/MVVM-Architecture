@@ -55,7 +55,6 @@ public class ContactRemoteDataSource implements ContactDataSource {
                             contacts = new ArrayList<>();
                             // Traversing elements
                             for (ContactModel model : contactModelList) {
-                                System.out.println(model);
                                 contacts.add(new Contact(model.getName(),model.getImage(), model.getPhone()));
                             }
 

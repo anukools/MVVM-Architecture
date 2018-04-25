@@ -1,16 +1,21 @@
 package in.anukool.architecture;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import java.util.List;
+
 import in.anukool.architecture.databinding.ActivityMainBinding;
 import in.anukool.architecture.mvvm.ContactViewModel;
 import in.anukool.architecture.mvvm.ViewModelFactory;
+import in.anukool.architecture.mvvm.data.source.Contact;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,8 +37,14 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(contactsAdapter);
 
 
-        mViewModel.start();
+        mViewModel.getContacts().observe(this, new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(@Nullable List<Contact> contacts) {
+                mViewModel.updateDataBindingObservables(contacts);
+            }
+        });
 
+        mViewModel.start();
     }
 
     public static ContactViewModel obtainViewModel(AppCompatActivity activity) {

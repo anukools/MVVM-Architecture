@@ -23,17 +23,17 @@ public class ContactViewModel extends AndroidViewModel {
     private final Context mContext;
 
     // These observable fields will update Views automatically
-    public final ObservableList<Contact> contacts = new ObservableArrayList<>();
+    public final ObservableList<Contact> contactList = new ObservableArrayList<>();
 
     private final ObservableBoolean dataLoading = new ObservableBoolean(false);
 
     private final ObservableBoolean mIsDataLoadingError = new ObservableBoolean(false);
 
-    private final ObservableBoolean empty = new ObservableBoolean(false);
+    public final ObservableBoolean empty = new ObservableBoolean(false);
 
     private final ContactRepository mContactRepository;
 
-    private final SingleLiveEvent<String> singleLiveEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<List<Contact>> singleLiveEvent;
 
 
 
@@ -41,11 +41,12 @@ public class ContactViewModel extends AndroidViewModel {
         super(application);
         mContext = application.getApplicationContext();
         mContactRepository = contactRepository;
+        singleLiveEvent = new SingleLiveEvent<>();
 
         Log.e("Called :", "ContactViewModel Constructor");
     }
 
-    SingleLiveEvent<String> getContacts() {
+    public SingleLiveEvent<List<Contact>> getContacts() {
         return singleLiveEvent;
     }
 
@@ -60,8 +61,7 @@ public class ContactViewModel extends AndroidViewModel {
         mContactRepository.getTasks(new ContactDataSource.LoadTasksCallback() {
             @Override
             public void onTasksLoaded(List<Contact> tasks) {
-                mIsDataLoadingError.set(false);
-                updateDataBindingObservables(tasks);
+                singleLiveEvent.setValue(tasks);
 
                 Log.e("Called :", "loadedContactData");
             }
@@ -74,14 +74,14 @@ public class ContactViewModel extends AndroidViewModel {
 
     }
 
-    private void updateDataBindingObservables(List<Contact> tasks) {
+    public void updateDataBindingObservables(List<Contact> tasks) {
 
         Log.e("Called :", "updateDataBindingObservables - " + tasks.size());
-
+        mIsDataLoadingError.set(false);
         dataLoading.set(false);
-        contacts.clear();
-        contacts.addAll(tasks);
-        empty.set(contacts.isEmpty());
+        contactList.clear();
+        contactList.addAll(tasks);
+        empty.set(contactList.isEmpty());
     }
 
 }
